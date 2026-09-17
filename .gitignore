@@ -1,0 +1,13 @@
+# Node dependencies
+node_modules/
+
+# Env & secrets - never upload API keys!
+.env
+
+# Logs
+*.log
+
+# OS files
+.DS_Store
+Thumbs.db
+Desktop.ini

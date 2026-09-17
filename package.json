@@ -1,0 +1,26 @@
+{
+  "name": "jasadigital",
+  "version": "1.0.0",
+  "description": "Platform jasa digital Indonesia dengan pembayaran QRIS, Virtual Account, dan Bank Transfer",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "jasa",
+    "digital",
+    "umkm",
+    "website",
+    "qris",
+    "virtual-account",
+    "midtrans"
+  ],
+  "author": "JasaDigital",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.19.2",
+    "node-fetch": "^3.3.2"
+  }
+}

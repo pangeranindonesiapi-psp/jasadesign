@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Layanan - JasaDigital | Pembayaran Aman QRIS, VA, Bank Transfer</title>
+    <meta name="description" content="Pesan jasa digital: website, desain grafis, SEO, marketing, AI. Pembayaran aman via QRIS, Virtual Account, dan Bank Transfer lokal Indonesia.">
+    <meta name="robots" content="index, follow">
+
+    <!-- Open Graph -->
+    <meta property="og:title" content="Order Layanan - JasaDigital">
+    <meta property="og:description" content="Pesan jasa digital dengan pembayaran aman via QRIS, VA, dan Bank Transfer.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://jasadigital.com/order.html">
+
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%234F46E5'/><text x='50' y='68' font-size='50' text-anchor='middle' fill='white' font-family='Arial' font-weight='bold'>J</text></svg>">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/order.css">
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg fixed-top navbar-dark" id="mainNav">
+        <div class="container">
+            <a class="navbar-brand fw-bold" href="index.html">
+                <span class="brand-icon"><i class="bi bi-lightning-charge-fill"></i></span>
+                Jasa<span class="text-accent">Digital</span>
+            </a>
+            <a href="index.html" class="btn btn-outline-light btn-sm ms-auto px-4"><i class="bi bi-arrow-left me-2"></i>Kembali</a>
+        </div>
+    </nav>
+
+    <!-- ===================== ORDER PAGE ===================== -->
+    <section class="order-page py-5">
+        <div class="container">
+            <div class="text-center mb-5 pt-5">
+                <span class="section-badge">Form Order</span>
+                <h1 class="section-title">Pesan Layanan <span class="gradient-text">Digital</span></h1>
+                <p class="text-muted mt-2">Lengkapi detail di bawah. Tranfer, Virtual Account, QRIS, dan Kartu. Pembayaran 100% aman.</p>
+            </div>
+
+            <!-- Security notice -->
+            <div class="security-banner mb-4">
+                <i class="bi bi-shield-lock-fill me-2"></i>
+                Koneksi Anda terenkripsi (SSL 256-bit). Data Anda TIDAK akan dibagikan ke pihak ketiga.
+            </div>
+
+            <div class="row g-4">
+                <!-- Form Order -->
+                <div class="col-lg-7">
+                    <div class="order-form-card">
+                        <form id="orderForm" novalidate>
+                            <!-- Pilih Layanan -->
+                            <div class="form-section">
+                                <h5 class="form-section-title"><span class="step-num">1</span> Pilih Layanan</h5>
+                                <div class="row g-3">
+                                    <div class="col-md-6">
+                                        <label class="form-label fw-semibold">Jenis Layanan *</label>
+                                        <select class="form-select" id="serviceSelect" required>
+                                            <option value="">-- Pilih Layanan --</option>
+                                            <option value="web" data-price="250000">Web Development (Rp250.000)</option>
+                                            <option value="desain" data-price="150000">Desain Grafis (Rp150.000)</option>
+                                            <option value="seo" data-price="350000">SEO Optimization (Rp350.000)</option>
+                                            <option value="marketing" data-price="500000">Digital Marketing (Rp500.000)</option>
+                                            <option value="ai" data-price="400000">AI Automation (Rp400.000)</option>
+                                            <option value="security" data-price="300000">Keamanan Website (Rp300.000)</option>
+                                        </select>
+                                        <div class="invalid-feedback">Silakan pilih jenis layanan.</div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label fw-semibold">Paket *</label>
+                                        <select class="form-select" id="packageSelect" required>
+                                            <option value="">-- Pilih Paket --</option>
+                                            <option value="starter">Starter</option>
+                                            <option value="business">Business (Paling Populer)</option>
+                                            <option value="enterprise">Enterprise</option>
+                                        </select>
+                                        <div class="invalid-feedback">Silakan pilih paket.</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Data Diri -->
+                            <div class="form-section">
+                                <h5 class="form-section-title"><span class="step-num">2</span> Data Anda</h5>
+                                <div class="row g-3">
+                                    <div class="col-md-6">
+                                        <label class="form-label fw-semibold">Nama Lengkap *</label>
+                                        <input type="text" class="form-control" id="nameInput" placeholder="cth: Budi Santoso" required minlength="3" autocomplete="name">
+                                        <div class="invalid-feedback">Nama minimal 3 karakter.</div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label fw-semibold">Nomor WhatsApp *</label>
+                                        <div class="input-group">
+                                            <span class="input-group-text">+62</span>
+                                            <input type="tel" class="form-control" id="phoneInput" placeholder="8123456789" required pattern="^[0-9]{8,13}$" autocomplete="tel">
+                                        </div>
+                                        <div class="invalid-feedback">Masukkan nomor valid (8-13 digit).</div>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <label class="form-label fw-semibold">Email *</label>
+                                        <input type="email" class="form-control" id="emailInput" placeholder="anda@email.com" required autocomplete="email">
+                                        <div class="invalid-feedback">Masukkan email yang valid.</div>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <label class="form-label fw-semibold">Deskripsi Proyek *</label>
+                                        <textarea class="form-control" id="descInput" rows="4" placeholder="Ceritakan tentang proyek Anda: apa yang dibutuhkan, referensi, target, dll." required minlength="10"></textarea>
+                                        <div class="invalid-feedback">Deskripsi minimal 10 karakter.</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Metode Pembayaran -->
+                            <div class="form-section">
+                                <h5 class="form-section-title"><span class="step-num">3</span> Metode Pembayaran</h5>
+                                <div class="payment-methods-grid">
+                                    <label class="payment-method-option">
+                                        <input type="radio" name="paymentMethod" value="qris" checked>
+                                        <span class="pm-card">
+                                            <span class="pm-icon"><i class="bi bi-qr-code-scan"></i></span>
+                                            <span class="pm-info">
+                                                <span class="pm-name">QRIS</span>
+                                                <span class="pm-desc">Semua e-wallet &amp; bank</span>
+                                            </span>
+                                            <span class="pm-check"><i class="bi bi-check-circle-fill"></i></span>
+                                        </span>
+                                    </label>
+                                    <label class="payment-method-option">
+                                        <input type="radio" name="paymentMethod" value="va">
+                                        <span class="pm-card">
+                                            <span class="pm-icon"><i class="bi bi-bank"></i></span>
+                                            <span class="pm-info">
+                                                <span class="pm-name">Virtual Account</span>
+                                                <span class="pm-desc">BCA, Mandiri, BNI, BRI, dll</span>
+                                            </span>
+                                            <span class="pm-check"><i class="bi bi-check-circle-fill"></i></span>
+                                        </span>
+                                    </label>
+                                    <label class="payment-method-option">
+                                        <input type="radio" name="paymentMethod" value="transfer">
+                                        <span class="pm-card">
+                                            <span class="pm-icon"><i class="bi bi-arrow-left-right"></i></span>
+                                            <span class="pm-info">
+                                                <span class="pm-name">Bank Transfer</span>
+                                                <span class="pm-desc">Transfer manual ke rekening</span>
+                                            </span>
+                                            <span class="pm-check"><i class="bi bi-check-circle-fill"></i></span>
+                                        </span>
+                                    </label>
+                                    <label class="payment-method-option">
+                                        <input type="radio" name="paymentMethod" value="ewallet">
+                                        <span class="pm-card">
+                                            <span class="pm-icon"><i class="bi bi-phone"></i></span>
+                                            <span class="pm-info">
+                                                <span class="pm-name">E-Wallet</span>
+                                                <span class="pm-desc">GoPay, OVO, DANA</span>
+                                            </span>
+                                            <span class="pm-check"><i class="bi bi-check-circle-fill"></i></span>
+                                        </span>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <!-- Ringkasan -->
+                            <div class="form-section">
+                                <h5 class="form-section-title"><span class="step-num">4</span> Ringkasan &amp; Konfirmasi</h5>
+                                <div class="order-summary">
+                                    <div class="d-flex justify-content-between mb-2">
+                                        <span id="summaryService" class="text-muted">Layanan: -</span>
+                                        <span class="fw-bold" id="summaryPrice">Rp0</span>
+                                    </div>
+                                    <div class="d-flex justify-content-between mb-2">
+                                        <span id="summaryPackage" class="text-muted">Paket: -</span>
+                                        <span class="text-muted">Sekali Bayar</span>
+                                    </div>
+                                    <hr>
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <span class="fw-bold fs-5">Total Bayar</span>
+                                        <span class="gradient-text fw-bold fs-4" id="totalPrice">Rp0</span>
+                                    </div>
+                                    <div class="form-check mt-3">
+                                        <input class="form-check-input" type="checkbox" id="agreeCheck" required>
+                                        <label class="form-check-label small" for="agreeCheck">
+                                            Saya menyetujui <a href="#" data-bs-toggle="modal" data-bs-target="#termsModal">Syarat &amp; Ketentuan</a> dan
+                                            <a href="#" data-bs-toggle="modal" data-bs-target="#privacyModal">Kebijakan Privasi</a>.
+                                        </label>
+                                        <div class="invalid-feedback">Anda harus menyetujui syarat &amp; ketentuan.</div>
+                                    </div>
+                                </div>
+                                <button type="submit" class="btn btn-accent btn-lg w-100 fw-bold mt-4" id="submitBtn">
+                                    <i class="bi bi-lock-fill me-2"></i>Bayar Sekarang &amp; Pesan
+                                </button>
+                                <p class="text-center text-muted small mt-3 mb-0">
+                                    <i class="bi bi-shield-check me-1"></i>
+                                    Transaksi diproses melalui Midtrans (PCI-DSS Certified)
+                                </p>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Sidebar -->
+                <div class="col-lg-5">
+                    <div class="order-sidebar">
+                        <div class="sidebar-box">
+                            <h6 class="fw-bold mb-3"><i class="bi bi-question-circle me-2 text-primary"></i>Membutuhkan Bantuan?</h6>
+                            <p class="text-muted small">Tim kami siap membantu Anda memilih layanan yang tepat.</p>
+                            <a href="https://wa.me/6281234567890?text=Halo%20JasaDigital%2C%20saya%20butuh%20bantuan%20memilih%20layanan" class="btn btn-success w-100 fw-semibold" rel="noopener">
+                                <i class="bi bi-whatsapp me-2"></i>Chat WhatsApp
+                            </a>
+                        </div>
+                        <div class="sidebar-box">
+                            <h6 class="fw-bold mb-3"><i class="bi bi-clock-history me-2 text-primary"></i>Alur Pengerjaan</h6>
+                            <ol class="timeline-list">
+                                <li><span class="tl-num">1</span>Order &amp; Pembayaran</li>
+                                <li><span class="tl-num">2</span>Konsultasi kebutuhan</li>
+                                <li><span class="tl-num">3</span>Pengerjaan proyek</li>
+                                <li><span class="tl-num">4</span>Revisi &amp; approval</li>
+                                <li><span class="tl-num">5</span>Deliver &amp; support</li>
+                            </ol>
+                        </div>
+                        <div class="sidebar-box">
+                            <h6 class="fw-bold mb-3"><i class="bi bi-patch-check me-2 text-primary"></i>Garansi</h6>
+                            <p class="text-muted small mb-2"><i class="bi bi-shield-check text-success me-2"></i>Uang kembali 100% jika tidak sesuai</p>
+                            <p class="text-muted small mb-2"><i class="bi bi-arrow-repeat text-success me-2"></i>Revisi gratis hingga 3x</p>
+                            <p class="text-muted small mb-0"><i class="bi bi-lock text-success me-2"></i>Transaksi aman terenkripsi</p>
+                        </div>
+                        <div class="sidebar-box">
+                            <h6 class="fw-bold mb-3"><i class="bi bi-piggy-bank me-2 text-primary"></i>Promo</h6>
+                            <div id="promoPanel">
+                                <p class="text-muted small">Masukkan kode promo untuk diskon tambahan:</p>
+                                <div class="input-group">
+                                    <input type="text" class="form-control" id="promoInput" placeholder="cth: PROMO10" maxlength="15">
+                                    <button class="btn btn-outline-primary" type="button" id="promoBtn">Terapkan</button>
+                                </div>
+                                <div id="promoMsg" class="mt-2 small"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Payment Modal -->
+    <div class="modal fade" id="paymentModal" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header border-0">
+                    <h5 class="modal-title fw-bold"><i class="bi bi-qr-code-scan me-2 text-primary"></i>Pembayaran</h5>
+                </div>
+                <div class="modal-body p-4">
+                    <div id="paymentContent">
+                        <!-- Payment content injected by JS -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Success Modal -->
+    <div class="modal fade" id="successModal" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false">
+        <div class="modal-dialog">
+            <div class="modal-content text-center p-4">
+                <div class="modal-body">
+                    <div class="success-icon mb-3">
+                        <i class="bi bi-check-circle-fill"></i>
+                    </div>
+                    <h4 class="fw-bold mb-2">Order Berhasil!</h4>
+                    <p class="text-muted" id="successOrderId">Order #XXXXXXXXXX telah kami terima.</p>
+                    <p class="text-muted small">Kami akan menghubungi Anda melalui WhatsApp/Email untuk konfirmasi dan memulai pengerjaan.</p>
+                    <button class="btn btn-accent w-100 mt-3 fw-bold" data-bs-dismiss="modal">Tutup</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modals -->
+    <div class="modal fade" id="privacyModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Kebijakan Privasi</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Data Anda dilindungi dengan enkripsi SSL. Informasi pembayaran diproses oleh Midtrans yang bersertifikat PCI-DSS Level 1. Kami tidak menyimpan data kartu/kredensial Anda.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="termsModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Syarat &amp; Ketentuan</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Pembayaran harus diselesaikan sebelum pengerjaan dimulai. Pengerjaan dimulai setelah pembayaran terkonfirmasi. Revisi maksimal 3x pada ruang lingkup awal. Garansi uang kembali berlaku sesuai ketentuan kebijakan kami.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="js/security.js"></script>
+    <script src="js/order.js"></script>
+</body>
+</html>

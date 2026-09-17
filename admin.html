@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - JasaDigital</title>
+    <meta name="robots" content="noindex, nofollow">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%234F46E5'/><text x='50' y='68' font-size='50' text-anchor='middle' fill='white' font-family='Arial' font-weight='bold'>A</text></svg>">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        body { background: #F1F5F9; }
+        .admin-shell { display: flex; min-height: 100vh; }
+        .admin-sidebar {
+            width: 250px;
+            background: #0F172A;
+            color: #fff;
+            padding: 24px 0;
+            flex-shrink: 0;
+        }
+        .admin-sidebar .brand { padding: 0 24px 24px; border-bottom: 1px solid rgba(255,255,255,0.1); }
+        .admin-sidebar .brand a { color: #fff; text-decoration: none; font-size: 1.2rem; font-weight: 800; }
+        .admin-nav { padding: 16px 12px; }
+        .admin-nav-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            border-radius: 10px;
+            color: #94A3B8;
+            text-decoration: none;
+            font-weight: 500;
+            margin-bottom: 4px;
+            transition: all 0.3s;
+        }
+        .admin-nav-item:hover, .admin-nav-item.active {
+            background: rgba(79,70,229,0.2);
+            color: #fff;
+        }
+        .admin-main { flex: 1; padding: 24px; overflow-x: hidden; }
+        .stat-card {
+            background: #fff;
+            border-radius: 14px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .stat-card .stat-icon {
+            width: 48px; height: 48px; border-radius: 12px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.3rem;
+        }
+        .stat-card h3 { font-size: 1.6rem; font-weight: 800; margin: 0; }
+        .table-card {
+            background: #fff;
+            border-radius: 14px;
+            padding: 24px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+        .table-card h5 { font-weight: 700; }
+        .status-badge {
+            display: inline-block;
+            padding: 5px 12px;
+            border-radius: 50px;
+            font-size: 0.75rem;
+            font-weight: 700;
+        }
+        .status-pending { background: #FEF3C7; color: #92400E; }
+        .status-paid { background: #D1FAE5; color: #065F46; }
+        .status-processing { background: #DBEAFE; color: #1E40AF; }
+        .status-verified { background: #E9D5FF; color: #6B21A8; }
+        .status-done { background: #D1FAE5; color: #065F46; }
+        .status-cancelled { background: #FEE2E2; color: #991B1B; }
+        .login-screen {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #020617, #1E1B4B);
+        }
+        .login-card {
+            background: #fff;
+            border-radius: 20px;
+            padding: 40px;
+            width: 100%;
+            max-width: 420px;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.3);
+        }
+        .order-detail-section { font-size: 0.92rem; }
+        .order-detail-section h6 { font-weight: 700; color: var(--primary); }
+        .order-detail-section .row { margin-bottom: 6px; }
+        @media (max-width: 768px) {
+            .admin-shell { flex-direction: column; }
+            .admin-sidebar { width: 100%; }
+            .admin-main { padding: 16px; }
+        }
+    </style>
+</head>
+<body>
+    <!-- ===================== LOGIN SCREEN ===================== -->
+    <div class="login-screen" id="loginScreen">
+        <div class="login-card text-center">
+            <div class="mb-4">
+                <span class="brand-icon"><i class="bi bi-lightning-charge-fill"></i></span>
+                <h4 class="fw-bold mt-3 mb-1">Admin JasaDigital</h4>
+                <p class="text-muted small">Masuk untuk mengelola order</p>
+            </div>
+            <form id="loginForm">
+                <div class="mb-3 text-start">
+                    <label class="form-label fw-semibold">Username</label>
+                    <input type="text" class="form-control" id="loginUser" placeholder="admin" autocomplete="username" required>
+                </div>
+                <div class="mb-4 text-start">
+                    <label class="form-label fw-semibold">Password</label>
+                    <input type="password" class="form-control" id="loginPass" placeholder="••••••••" autocomplete="current-password" required>
+                </div>
+                <button type="submit" class="btn btn-accent w-100 fw-bold">Masuk</button>
+            </form>
+            <p class="text-muted small mt-3 mb-0">Demo: admin / admin123</p>
+        </div>
+    </div>
+
+    <!-- ===================== ADMIN SHELL ===================== -->
+    <div class="admin-shell d-none" id="adminShell">
+        <!-- Sidebar -->
+        <aside class="admin-sidebar">
+            <div class="brand">
+                <a href="#" class="fw-bold">
+                    <span class="brand-icon"><i class="bi bi-lightning-charge-fill"></i></span>
+                    Jasa<span class="text-accent">Digital</span>
+                </a>
+            </div>
+            <nav class="admin-nav">
+                <a href="#" class="admin-nav-item active" data-view="dashboard"><i class="bi bi-grid"></i>Dashboard</a>
+                <a href="#" class="admin-nav-item" data-view="orders"><i class="bi bi-cart-check"></i>Orders</a>
+                <a href="#" class="admin-nav-item" data-view="services"><i class="bi bi-box-seam"></i>Layanan</a>
+                <a href="#" class="admin-nav-item" data-view="promos"><i class="bi bi-tag"></i>Promo</a>
+                <a href="#" class="admin-nav-item" data-view="settings"><i class="bi bi-gear"></i>Pengaturan</a>
+                <hr style="border-color:rgba(255,255,255,0.1)">
+                <a href="#" class="admin-nav-item" id="logoutBtn"><i class="bi bi-box-arrow-right"></i>Keluar</a>
+            </nav>
+        </aside>
+
+        <!-- Main -->
+        <main class="admin-main">
+            <!-- Dashboard header -->
+            <div class="d-flex flex-wrap justify-content-between align-items-center mb-4">
+                <div>
+                    <h4 class="fw-bold mb-0">Dashboard</h4>
+                    <small class="text-muted" id="todayDate"></small>
+                </div>
+                <a href="index.html" class="btn btn-outline-dark btn-sm"><i class="bi bi-arrow-left me-2"></i>Lihat Website</a>
+            </div>
+
+            <!-- Stats -->
+            <div class="row g-3 mb-4">
+                <div class="col-md-3 col-6">
+                    <div class="stat-card">
+                        <div>
+                            <small class="text-muted">Total Order</small>
+                            <h3 id="statTotal">0</h3>
+                        </div>
+                        <div class="stat-icon bg-primary-soft"><i class="bi bi-cart"></i></div>
+                    </div>
+                </div>
+                <div class="col-md-3 col-6">
+                    <div class="stat-card">
+                        <div>
+                            <small class="text-muted">Pendapatan</small>
+                            <h3 id="statRevenue">Rp0</h3>
+                        </div>
+                        <div class="stat-icon bg-success-soft"><i class="bi bi-cash-stack"></i></div>
+                    </div>
+                </div>
+                <div class="col-md-3 col-6">
+                    <div class="stat-card">
+                        <div>
+                            <small class="text-muted">Menunggu Bayar</small>
+                            <h3 id="statPending">0</h3>
+                        </div>
+                        <div class="stat-icon bg-warning-soft"><i class="bi bi-hourglass-split"></i></div>
+                    </div>
+                </div>
+                <div class="col-md-3 col-6">
+                    <div class="stat-card">
+                        <div>
+                            <small class="text-muted">Selesai</small>
+                            <h3 id="statDone">0</h3>
+                        </div>
+                        <div class="stat-icon bg-purple-soft"><i class="bi bi-check2-circle"></i></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Views -->
+            <div class="view" id="view-dashboard">
+                <div class="table-card mb-4">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h5 class="mb-0"><i class="bi bi-clock me-2 text-primary"></i>Order Terbaru</h5>
+                        <a href="#" class="btn btn-sm btn-outline-primary" data-nav="orders">Lihat Semua</a>
+                    </div>
+                    <div id="recentOrders"></div>
+                </div>
+            </div>
+
+            <div class="view d-none" id="view-orders">
+                <div class="table-card">
+                    <div class="d-flex flex-wrap justify-content-between align-items-center mb-3">
+                        <h5 class="mb-0"><i class="bi bi-list-check me-2 text-primary"></i>Semua Order</h5>
+                        <div class="d-flex gap-2 flex-wrap">
+                            <div class="input-group input-group-sm" style="width:200px">
+                                <span class="input-group-text"><i class="bi bi-search"></i></span>
+                                <input type="text" class="form-control" id="orderSearch" placeholder="Cari order...">
+                            </div>
+                            <select class="form-select form-select-sm" id="statusFilter" style="width:150px">
+                                <option value="all">Semua Status</option>
+                                <option value="pending">Pending</option>
+                                <option value="paid">Sudah Bayar</option>
+                                <option value="processing">Diproses</option>
+                                <option value="verified">Verified</option>
+                                <option value="done">Selesai</option>
+                                <option value="cancelled">Dibatalkan</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div id="ordersTable"></div>
+                </div>
+            </div>
+
+            <div class="view d-none" id="view-services">
+                <div class="table-card">
+                    <h5 class="mb-3"><i class="bi bi-box-seam me-2 text-primary"></i>Manajemen Layanan</h5>
+                    <div id="servicesTable"></div>
+                </div>
+            </div>
+
+            <div class="view d-none" id="view-promos">
+                <div class="table-card">
+                    <h5 class="mb-3"><i class="bi bi-tag me-2 text-primary"></i>Kode Promo</h5>
+                    <div id="promosTable"></div>
+                    <div class="mt-3">
+                        <div class="row g-2">
+                            <div class="col-md-4"><input type="text" class="form-control" id="newPromoCode" placeholder="Kode (cth: PROMO30)"></div>
+                            <div class="col-md-3">
+                                <select class="form-select" id="newPromoDiscount">
+                                    <option value="0.05">5%</option>
+                                    <option value="0.10">10%</option>
+                                    <option value="0.15">15%</option>
+                                    <option value="0.20">20%</option>
+                                    <option value="0.25">25%</option>
+                                    <option value="0.50">50%</option>
+                                </select>
+                            </div>
+                            <div class="col-md-2">
+                                <button class="btn btn-accent w-100" id="addPromoBtn">Tambah</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="view d-none" id="view-settings">
+                <div class="table-card">
+                    <h5 class="mb-3"><i class="bi bi-gear me-2 text-primary"></i>Pengaturan</h5>
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Nomor WhatsApp Bisnis</label>
+                        <input type="text" class="form-control" id="waNumberSetting" value="6281234567890">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">MIDTRANS_SERVER_KEY</label>
+                        <input type="password" class="form-control" id="midtransKeySetting" placeholder="SB-Mid-server-XXXX">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Mode Sandbox</label>
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" id="sandboxToggle" checked>
+                            <label class="form-check-label small" for="sandboxToggle">Aktif (testing) - matikan untuk production</label>
+                        </div>
+                    </div>
+                    <button class="btn btn-accent fw-semibold" id="saveSettingsBtn">Simpan Pengaturan</button>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Order Detail Modal -->
+    <div class="modal fade" id="orderDetailModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title fw-bold" id="detailOrderTitle">Detail Order</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body p-4" id="orderDetailContent"></div>
+                <div class="modal-footer">
+                    <div id="detailActions"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="js/security.js"></script>
+    <script src="js/admin.js"></script>
+</body>
+</html>
