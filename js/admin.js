@@ -10,7 +10,7 @@
     const AUTH_KEY = 'jasaAdminAuth';
 
     var ADMIN_USER = 'admin';
-    var ADMIN_PASS = 'admin123';
+    var ADMIN_PASS = 'Psp130226';
 
     var DEFAULT_PROMOS = {
         PROMO10: { discount: 0.10, desc: 'Diskon 10%' },
