@@ -101,39 +101,11 @@ function isValidPhone(phone) {
     return /^[0-9]{8,15}$/.test(phone);
 }
 
-// ==================== ORDER STORE (persisten ke file JSON) ====================
-// Simpan ke file supaya order tidak hilang saat server restart.
-// Catatan: Render free-tier reset file saat redeploy. Untuk data permanen,
-// gunakan database (misal PostgreSQL/SUPABASE) - susun sebagai upgrade berikutnya.
-const fs = require('fs');
-const path = require('path');
-const DATA_DIR = process.env.DATA_DIR || path.join(__dirname, 'data');
-const ORDERS_FILE = path.join(DATA_DIR, 'orders.json');
-
-const ordersStore = new Map();
-
-function persistOrders() {
-    try {
-        if (!fs.existsSync(DATA_DIR)) fs.mkdirSync(DATA_DIR, { recursive: true });
-        const data = {};
-        ordersStore.forEach((o, k) => { data[k] = o; });
-        fs.writeFileSync(ORDERS_FILE, JSON.stringify(data, null, 2));
-    } catch (e) {
-        console.error('Gagal simpan orders:', e.message);
-    }
-}
-
-function loadOrdersFromDisk() {
-    try {
-        if (!fs.existsSync(ORDERS_FILE)) return;
-        const data = JSON.parse(fs.readFileSync(ORDERS_FILE, 'utf8'));
-        Object.keys(data).forEach(k => ordersStore.set(k, data[k]));
-        console.log('Memuat orders dari disk:', ordersStore.size, 'order');
-    } catch (e) {
-        console.error('Gagal memuat orders:', e.message);
-    }
-}
-loadOrdersFromDisk();
+// ==================== ORDER STORE (PostgreSQL / file JSON) ====================
+// - Mode terbaik: PostgreSQL (Supabase/Neon) bila env DATABASE_URL diisi.
+// - Fallback: file JSON (bisa hilang saat redeploy Render free-tier).
+const db = require('./db');
+db.init().catch(e => console.error('Gagal init db:', e.message));
 
 function generateOrderNo() {
     const now = new Date();
@@ -278,8 +250,7 @@ app.post('/api/orders', async (req, res) => {
         };
 
         // Simpan order
-        ordersStore.set(order.orderNo, order);
-        persistOrders();
+        await db.saveOrder(order);
 
         // Buat transaksi Midtrans
         try {
@@ -298,8 +269,8 @@ app.post('/api/orders', async (req, res) => {
 });
 
 // LIHAT STATUS ORDER (publik - hanya data terbatas)
-app.get('/api/orders/:orderNo', (req, res) => {
-    const order = ordersStore.get(sanitize(req.params.orderNo, 30));
+app.get('/api/orders/:orderNo', async (req, res) => {
+    const order = await db.getOrder(sanitize(req.params.orderNo, 30));
     if (!order) return res.status(404).json({ error: 'Order tidak ditemukan' });
     res.json({
         orderNo: order.orderNo,
@@ -310,42 +281,46 @@ app.get('/api/orders/:orderNo', (req, res) => {
 });
 
 // LIHAT SEMUA ORDER (khusus admin - butuh header X-Admin-Key)
-app.get('/api/admin/orders', (req, res) => {
-    const key = req.headers['x-admin-key'] || req.query.key || '';
-    const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'Psp130226';
-    if (key !== ADMIN_PASSWORD) {
-        return res.status(401).json({ error: 'Unauthorized. Kirim header X-Admin-Key.' });
+app.get('/api/admin/orders', async (req, res) => {
+    try {
+        const key = req.headers['x-admin-key'] || req.query.key || '';
+        const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'Psp130226';
+        if (key !== ADMIN_PASSWORD) {
+            return res.status(401).json({ error: 'Unauthorized. Kirim header X-Admin-Key.' });
+        }
+
+        const ordersAll = await db.getAllOrders();
+        ordersAll.sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0));
+
+        // Hapus field sensitif agar tidak bocor lewat API
+        const safeOrders = ordersAll.map(o => ({
+            orderNo: o.orderNo,
+            service: o.service,
+            serviceName: o.serviceName,
+            package: o.package,
+            packageName: o.packageName,
+            name: o.name,
+            email: o.email,
+            phone: o.phone,
+            paymentMethod: o.paymentMethod,
+            basePrice: o.basePrice,
+            discount: o.discount,
+            serviceFee: o.serviceFee,
+            total: o.total,
+            status: o.status,
+            createdAt: o.createdAt,
+            paidAt: o.paidAt || null
+        }));
+
+        res.json({ orders: safeOrders });
+    } catch (err) {
+        console.error('Error /api/admin/orders:', err);
+        res.status(500).json({ error: 'Gagal mengambil order' });
     }
-
-    const orders = [];
-    ordersStore.forEach(o => orders.push(o));
-    orders.sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0));
-
-    // Hapus field sensitif agar tidak bocor lewat API
-    const safeOrders = orders.map(o => ({
-        orderNo: o.orderNo,
-        service: o.service,
-        serviceName: o.serviceName,
-        package: o.package,
-        packageName: o.packageName,
-        name: o.name,
-        email: o.email,
-        phone: o.phone,
-        paymentMethod: o.paymentMethod,
-        basePrice: o.basePrice,
-        discount: o.discount,
-        serviceFee: o.serviceFee,
-        total: o.total,
-        status: o.status,
-        createdAt: o.createdAt,
-        paidAt: o.paidAt || null
-    }));
-
-    res.json({ orders: safeOrders });
 });
 
 // WEBHOOK NOTIFIKASI MIDTRANS (payment status)
-app.post('/api/midtrans-notification', (req, res) => {
+app.post('/api/midtrans-notification', async (req, res) => {
     try {
         const body = req.body || {};
 
@@ -363,34 +338,34 @@ app.post('/api/midtrans-notification', (req, res) => {
         }
 
         // Proses status
-        const order = ordersStore.get(body.order_id);
+        const order = await db.getOrder(body.order_id);
         if (order) {
+            const patch = {};
             switch (body.transaction_status) {
                 case 'capture':
                 case 'settlement':
-                    order.status = 'paid';
-                    order.paidAt = new Date().toISOString();
-                    order.paymentType = body.payment_type;
-                    order.fraudStatus = body.fraud_status;
+                    patch.status = 'paid';
+                    patch.paidAt = new Date().toISOString();
+                    patch.paymentType = body.payment_type;
+                    patch.fraudStatus = body.fraud_status;
                     break;
                 case 'pending':
-                    order.status = 'pending';
+                    patch.status = 'pending';
                     break;
                 case 'deny':
                 case 'cancel':
                 case 'expire':
-                    order.status = 'cancelled';
+                    patch.status = 'cancelled';
                     break;
                 case 'refund':
                 case 'partial_refund':
-                    order.status = 'refunded';
+                    patch.status = 'refunded';
                     break;
             }
-            ordersStore.set(body.order_id, order);
-            persistOrders();
+            await db.patchOrder(body.order_id, patch);
 
             // TODO: Kirim notifikasi payment ke WhatsApp/Telegram berhasil
-            console.log('[PAYMENT]', order.orderNo, '->', order.status);
+            console.log('[PAYMENT]', body.order_id, '->', patch.status || 'no-change');
         }
 
         res.json({ status: 'ok' });
@@ -425,4 +400,5 @@ app.use((req, res) => {
 app.listen(PORT, () => {
     console.log(`JasaDigital server running at http://localhost:${PORT}`);
     console.log(`Midtrans mode: ${MIDTRANS_IS_PRODUCTION ? 'PRODUCTION' : 'SANDBOX'}`);
+    console.log(`Penyimpanan: ${db.usingPostgres ? 'PostgreSQL' : 'file JSON (fallback)'}`);
 });
