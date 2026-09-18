@@ -29,7 +29,10 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 // Header CORS - hanya izinkan domain sendiri
-const ALLOWED_ORIGIN = process.env.ALLOWED_ORIGIN || 'http://localhost:3000';
+const ALLOWED_ORIGINS = (process.env.ALLOWED_ORIGINS ||
+    'http://localhost:3000,' +
+    'http://localhost:5500,' +
+    'https://pangeranindonesiapi-psp.github.io').split(',');
 
 // ==================== SECURITY HEADERS (Anti-Phishing) ====================
 app.use((req, res, next) => {
@@ -61,7 +64,13 @@ app.use((req, res, next) => {
     }
 
     // CORS untuk domain sendiri
-    res.setHeader('Access-Control-Allow-Origin', ALLOWED_ORIGIN);
+    const reqOrigin = req.headers.origin || '';
+    if (ALLOWED_ORIGINS.indexOf(reqOrigin) !== -1) {
+        res.setHeader('Access-Control-Allow-Origin', reqOrigin);
+        res.setHeader('Vary', 'Origin');
+    } else {
+        res.setHeader('Access-Control-Allow-Origin', ALLOWED_ORIGINS[0]);
+    }
     res.setHeader('Access-Control-Allow-Methods', 'POST, GET, OPTIONS');
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
 
