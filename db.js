@@ -26,7 +26,10 @@ if (DATABASE_URL) {
         const { Pool } = require('pg');
         pool = new Pool({
             connectionString: DATABASE_URL,
-            ssl: { rejectUnauthorized: false }
+            ssl: { rejectUnauthorized: false },
+            max: 5,
+            connectionTimeoutMillis: 15000,
+            idleTimeoutMillis: 30000
         });
         usingPostgres = true;
     } catch (e) {
