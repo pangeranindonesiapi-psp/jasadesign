@@ -17,7 +17,7 @@
  *   MIDTRANS_SERVER_KEY=<server key dari dashboard Midtrans>
  *   MIDTRANS_IS_PRODUCTION=false    // true saat production
  *   ADMIN_PASSWORDHash=<hash password admin>
- *   WHATSAPP_NUMBER=6281234567890
+ *   WHATSAPP_NUMBER=6281383048811
  * ============================================================ */
 
 'use strict';

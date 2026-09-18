@@ -254,7 +254,7 @@
             'Silakan hubungi klien untuk konfirmasi.';
         console.log('[WhatsApp Notification]', msg);
         // Uncomment untuk auto redirect ke WA (production, ganti nomor Anda)
-        // window.open('https://wa.me/6281234567890?text=' + encodeURIComponent(msg), '_blank');
+        // window.open('https://wa.me/6281383048811?text=' + encodeURIComponent(msg), '_blank');
     }
 
     // ============ RENDER PAYMENT ============
@@ -319,7 +319,7 @@
             html += '</div>';
             html += '<ol class="payment-steps">';
             html += '<li>1. Transfer sejumlah <strong>' + formatRupiah(order.total) + '</strong></li>';
-            html += '<li>2. Kirim bukti transfer via <strong>WhatsApp</strong> ke +62 812-3456-7890 atau tekan tombol di bawah</li>';
+            html += '<li>2. Kirim bukti transfer via <strong>WhatsApp</strong> ke +62 813-8304-8811 atau tekan tombol di bawah</li>';
             html += '<li>3. Konfirmasi maksimal 2x24 jam, order langsung diproses</li>';
             html += '</ol>';
         } else if (method === 'ewallet') {
@@ -342,7 +342,7 @@
         html += '<button class="btn btn-' + color + ' btn-lg w-100 fw-bold payment-done-btn" id="markPaidBtn">';
         html += '<i class="bi bi-check-circle me-2"></i> Saya Sudah Bayar';
         html += '</button>';
-        html += '<p class="small text-muted mt-2">Butuh bantuan? <a href="https://wa.me/6281234567890" target="_blank" rel="noopener">Hubungi kami</a></p>';
+        html += '<p class="small text-muted mt-2">Butuh bantuan? <a href="https://wa.me/6281383048811" target="_blank" rel="noopener">Hubungi kami</a></p>';
 
         html += '</div>';
 
