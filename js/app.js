@@ -135,9 +135,95 @@
 
     // ============ ANALYTICS HOOK (demo) ============
     function trackEvent(eventName, data) {
-        // Production: ganti dengan GA4 / Plausible / Matomo
-        // window.gtag('event', eventName, data);
+        // Jika Google Analytics sudah aktif, kirim event ke GA4
+        if (typeof window.gtag === 'function') {
+            window.gtag('event', eventName, data || {});
+        }
         console.log('[Event]', eventName, data || '');
+    }
+
+    // ============ CEK STATUS ORDER ============
+    var BACKEND_URL = 'https://jasadesign-backend.onrender.com';
+    var STATUS_LABELS = {
+        pending: 'Menunggu Pembayaran',
+        paid: 'Sudah Dibayar',
+        processing: 'Dalam Proses Pengerjaan',
+        verified: 'Terverifikasi',
+        done: 'Selesai',
+        cancelled: 'Dibatalkan',
+        refunded: 'Refund'
+    };
+    var STATUS_COLORS = {
+        pending: 'warning', paid: 'primary', processing: 'info',
+        verified: 'success', done: 'success', cancelled: 'danger', refunded: 'secondary'
+    };
+
+    function esc(str) {
+        return String(str || '').replace(/&/g, '&amp;').replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+    }
+
+    function fmtRp(n) {
+        return 'Rp' + Number(n || 0).toLocaleString('id-ID');
+    }
+
+    function statusBadge(status) {
+        var st = status || '?';
+        var c = STATUS_COLORS[st] || 'secondary';
+        return '<span class="badge bg-' + c + '">' + esc(STATUS_LABELS[st] || st) + '</span>';
+    }
+
+    function initCekOrder() {
+        var form = document.getElementById('cekOrderForm');
+        if (!form) return;
+
+        form.addEventListener('submit', function (e) {
+            e.preventDefault();
+            var input = document.getElementById('cekOrderInput');
+            var out = document.getElementById('cekOrderResult');
+            var no = (input ? input.value : '').trim().toUpperCase();
+            if (!no) {
+                out.innerHTML = '<div class="alert alert-warning mb-0">Masukkan nomor order terlebih dahulu.</div>';
+                return;
+            }
+            out.innerHTML = '<div class="text-center py-3"><span class="spinner-border text-primary"></span></div>';
+
+            trackEvent('cek_order', { order_no: no });
+
+            fetch(BACKEND_URL + '/api/orders/' + encodeURIComponent(no))
+                .then(function (r) {
+                    if (r.status === 404) throw new Error('NOT_FOUND');
+                    if (!r.ok) throw new Error('ERR');
+                    return r.json();
+                })
+                .then(function (o) {
+                    out.innerHTML =
+                        '<div class="alert alert-success mb-0">' +
+                        '<div class="fw-bold mb-1"><i class="bi bi-check-circle me-1"></i>Order <span class="text-primary">' + esc(o.orderNo) + '</span> ' + statusBadge(o.status) + '</div>' +
+                        '<small class="d-block text-muted">Metode: ' + esc(o.paymentMethod || '-') + '</small>' +
+                        '<small class="d-block text-muted">Total: <strong class="text-dark">' + fmtRp(o.total) + '</strong></small>' +
+                        '</div>';
+                })
+                .catch(function () {
+                    // Fallback: cari di order demo lokal (mode testing)
+                    var local = [];
+                    try { local = JSON.parse(localStorage.getItem('jasaOrders')) || []; } catch (x) { local = []; }
+                    var found = null;
+                    for (var i = 0; i < local.length; i++) {
+                        if (local[i].orderNo === no) { found = local[i]; break; }
+                    }
+                    if (found) {
+                        out.innerHTML =
+                            '<div class="alert alert-info mb-0">' +
+                            '<div class="fw-bold mb-1"><i class="bi bi-info-circle me-1"></i>Order <span class="text-primary">' + esc(found.orderNo) + '</span> ' + statusBadge(found.status) + '</div>' +
+                            '<small class="d-block text-muted">' + esc(found.serviceName || '') + '</small>' +
+                            '</div>';
+                    } else {
+                        out.innerHTML =
+                            '<div class="alert alert-warning mb-0"><i class="bi bi-search me-1"></i>Order <strong>' + esc(no) + '</strong> tidak ditemukan. Periksa kembali nomor order Anda atau hubungi kami via WhatsApp.</div>';
+                    }
+                });
+        });
     }
 
     // ============ INIT ============
@@ -148,6 +234,7 @@
         initBillingToggle();
         initSmoothScroll();
         initSecurity();
+        initCekOrder();
 
         // Scroll listener for navbar
         window.addEventListener('scroll', handleNavbarScroll);

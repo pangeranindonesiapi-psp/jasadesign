@@ -47,6 +47,16 @@
     }
     </script>
 
+    <!-- Google Analytics (GA4) -- Ganti G-XXXXXXXXXX dengan ID pengukuran Anda
+    Cara: https://analytics.google.com > Buat properti GA4 > Setelah itu ganti KODE di bawah. -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+        gtag('js', new Date());
+        gtag('config', 'G-XXXXXXXXXX');
+    </script>
+
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -76,6 +86,7 @@
                     <li class="nav-item"><a class="nav-link" href="#harga">Harga</a></li>
                     <li class="nav-item"><a class="nav-link" href="#testimoni">Testimoni</a></li>
                     <li class="nav-item"><a class="nav-link" href="#faq">FAQ</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#cekOrderModal"><i class="bi bi-search me-1"></i>Cek Order</a></li>
                     <li class="nav-item ms-lg-3"><a href="order.html" class="btn btn-accent btn-sm px-4 py-2 fw-semibold">Pesan Sekarang</a></li>
                 </ul>
             </div>
@@ -603,6 +614,33 @@
                 </div>
                 <div class="modal-body">
                     <p>Dengan menggunakan layanan kami, Anda setuju dengan syarat ini: pembayaran harus dilunasi sebelum pengerjaan dimulai, revisi maksimal 3x, dan garansi uang kembali berlaku sesuai ketentuan.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===================== MODAL CEK ORDER ===================== -->
+    <div class="modal fade" id="cekOrderModal" tabindex="-1" aria-label="Cek status order">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-search me-2 text-primary"></i>Cek Status Order</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Tutup"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="cekOrderForm">
+                        <label class="form-label fw-semibold" for="cekOrderInput">Nomor Order</label>
+                        <input type="text" class="form-control" id="cekOrderInput"
+                               placeholder="Contoh: JD-250918-XXXXX" autocomplete="off">
+                        <button type="submit" class="btn btn-accent w-100 mt-3 fw-semibold">
+                            <i class="bi bi-search me-1"></i>Cek Status
+                        </button>
+                    </form>
+                    <div id="cekOrderResult" class="mt-3"></div>
+                    <small class="text-muted d-block mt-3">
+                        Nomor order ada di <b>pesan konfirmasi</b> setelah Anda memesan. Butuh bantuan?
+                        <a href="https://wa.me/6281383048811?text=Halo%20JasaDigital,%20saya%20mau%20cek%20status%20order" target="_blank" rel="noopener">Chat WhatsApp</a>
+                    </small>
                 </div>
             </div>
         </div>
