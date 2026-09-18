@@ -66,6 +66,53 @@
     var currentStatusFilter = 'all';
     var currentSearch = '';
 
+    var SETTINGS_KEY = 'jasaAdminSettings';
+
+    function loadSettings() {
+        try { return JSON.parse(localStorage.getItem(SETTINGS_KEY)) || {}; }
+        catch (e) { return {}; }
+    }
+
+    function saveSettings(s) {
+        localStorage.setItem(SETTINGS_KEY, JSON.stringify(s));
+    }
+
+    var backendOrders = [];
+    var backendSynced = false;
+
+    // ============ AMBIL ORDER DARI BACKEND (Render) ============
+    function syncBackendOrders() {
+        var settings = loadSettings();
+        var url = settings.backendUrl || 'https://jasadesign-backend.onrender.com';
+        var key = settings.adminKey || 'Psp130226';
+
+        url = url.replace(/\/+$/, '');
+
+        var fetchOpts = {
+            method: 'GET',
+            headers: { 'X-Admin-Key': key }
+        };
+
+        return fetch(url + '/api/admin/orders', fetchOpts)
+            .then(function (res) {
+                if (!res.ok) throw new Error('Gagal ambil order dari backend (' + res.status + ')');
+                return res.json();
+            })
+            .then(function (data) {
+                backendOrders = (data && data.orders) || [];
+                backendSynced = true;
+                var msg = $('syncMsg');
+                if (msg) msg.textContent = 'Berhasil ambil ' + backendOrders.length + ' order dari backend.';
+                renderEverything();
+                return backendOrders;
+            })
+            .catch(function (err) {
+                var msg = $('syncMsg');
+                if (msg) msg.textContent = 'Gagal: ' + err.message;
+                throw err;
+            });
+    }
+
     function checkAuth() {
         return sessionStorage.getItem(AUTH_KEY) === '1';
     }
@@ -275,13 +322,6 @@
         // Actions
         var actions = $('detailActions');
         var statusHtml = '<div class="d-flex gap-2 flex-wrap">';
-        ['processing', 'verified', 'done', 'cancelled'].forEach(function (s) {
-            if (s !== order.status) {
-                statusHtml += '<button class="btn btn-sm btn-outline-";
-            }
-        });
-        // Skip cancelled color handling
-        statusHtml = '<div class="d-flex gap-2 flex-wrap">';
         statusHtml += '<button class="btn btn-sm btn-outline-primary" data-set-status="processing">Mulai Proses</button>';
         statusHtml += '<button class="btn btn-sm btn-outline-success" data-set-status="done">Tandai Selesai</button>';
         statusHtml += '<button class="btn btn-sm btn-outline-danger" data-set-status="cancelled">Batalkan</button>';
@@ -303,7 +343,15 @@
     };
 
     function renderEverything() {
-        currentOrders = loadOrders();
+        var local = loadOrders();
+        var seen = {};
+        currentOrders = [];
+        var merged = local.concat(backendOrders);
+        merged.forEach(function (o) {
+            if (!o || !o.orderNo || seen[o.orderNo]) return;
+            seen[o.orderNo] = true;
+            currentOrders.push(o);
+        });
         renderStats();
         renderOrders();
         renderRecentOrders();
@@ -344,6 +392,41 @@
         $('logoutBtn').addEventListener('click', function (e) {
             e.preventDefault();
             logout();
+        });
+
+        // Settings: isi nilai tersimpan
+        var initialSettings = loadSettings();
+        if ($('backendUrlSetting')) $('backendUrlSetting').value = initialSettings.backendUrl || 'https://jasadesign-backend.onrender.com';
+        if ($('adminKeySetting')) $('adminKeySetting').value = initialSettings.adminKey || 'Psp130226';
+        if ($('waNumberSetting')) $('waNumberSetting').value = initialSettings.waNumber || '6281383048811';
+        if ($('midtransKeySetting')) $('midtransKeySetting').value = initialSettings.midtransKey || '';
+        if (initialSettings.sandbox === false && $('sandboxToggle')) {
+            $('sandboxToggle').checked = false;
+        }
+
+        $('saveSettingsBtn').addEventListener('click', function () {
+            var s = loadSettings();
+            var opts = {
+                backendUrl: $('backendUrlSetting') ? $('backendUrlSetting').value.trim() : s.backendUrl,
+                adminKey: $('adminKeySetting') ? $('adminKeySetting').value.trim() : s.adminKey,
+                waNumber: $('waNumberSetting') ? $('waNumberSetting').value.trim() : s.waNumber,
+                midtransKey: $('midtransKeySetting') ? $('midtransKeySetting').value.trim() : s.midtransKey,
+                sandbox: $('sandboxToggle') ? $('sandboxToggle').checked : true
+            };
+            saveSettings(opts);
+            alert('Pengaturan tersimpan.');
+        });
+
+        $('syncBackendBtn').addEventListener('click', function () {
+            var btn = this;
+            btn.disabled = true;
+            btn.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span>Mengambil...';
+            syncBackendOrders()
+                .catch(function () { alert('Tidak bisa terhubung ke backend. Pastikan URL & kunci admin benar.'); })
+                .finally(function () {
+                    btn.disabled = false;
+                    btn.innerHTML = '<i class="bi bi-arrow-repeat me-1"></i>Ambil Order dari Backend';
+                });
         });
 
         // Nav switching

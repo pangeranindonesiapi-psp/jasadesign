@@ -272,6 +272,16 @@
                         <input type="text" class="form-control" id="waNumberSetting" value="6281383048811">
                     </div>
                     <div class="mb-3">
+                        <label class="form-label fw-semibold">URL Backend (Render)</label>
+                        <input type="text" class="form-control" id="backendUrlSetting" placeholder="https://jasadesign-backend.onrender.com">
+                        <small class="text-muted">Biar order sungguhan dari website tampil di dashboard.</small>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Kunci Admin Backend (X-Admin-Key)</label>
+                        <input type="password" class="form-control" id="adminKeySetting" placeholder="Psp130226">
+                        <small class="text-muted">Password admin (ingat: jangan kuat little, demi keamanan ganti di .env server).</small>
+                    </div>
+                    <div class="mb-3">
                         <label class="form-label fw-semibold">MIDTRANS_SERVER_KEY</label>
                         <input type="password" class="form-control" id="midtransKeySetting" placeholder="SB-Mid-server-XXXX">
                     </div>
@@ -283,6 +293,8 @@
                         </div>
                     </div>
                     <button class="btn btn-accent fw-semibold" id="saveSettingsBtn">Simpan Pengaturan</button>
+                    <button class="btn btn-outline-primary fw-semibold ms-2" id="syncBackendBtn"><i class="bi bi-arrow-repeat me-1"></i>Ambil Order dari Backend</button>
+                    <div class="small text-muted mt-2" id="syncMsg"></div>
                 </div>
             </div>
         </main>
