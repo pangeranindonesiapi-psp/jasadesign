@@ -15,6 +15,9 @@
         SANDBOX: true,
         MERCHANT_NAME: 'JasaDigital',
         MIDTRANS_SERVER_KEY: 'SB-Mid-server-YOUR_SERVER_KEY_HERE',
+        // URL backend server (Node.js). Ganti ke URL Render setelah deploy:
+        // contoh: 'https://jasadesign-xxxx.onrender.com'
+        BACKEND_URL: 'https://jasadesign-backend.onrender.com',
         CURRENCY: 'IDR',
         TAX_PERCENT: 0,       // PPN 11% -> 0.11 jika perlu
         SERVICE_FEE: 5000     // biaya layanan / unique midtrans fee
@@ -515,21 +518,82 @@
             btn.disabled = true;
             btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Memproses...';
 
-            // Simulasi proses (production: call server)
-            setTimeout(function () {
-                const order = buildOrder();
-                saveOrder(order);
+            const order = buildOrder();
 
-                // Re-enable button
-                btn.disabled = false;
-                btn.innerHTML = '<i class="bi bi-lock-fill me-2"></i>Bayar Sekarang &amp; Pesan';
-
-                // Show payment modal
-                renderPayment(order);
-                const modal = new bootstrap.Modal($('paymentModal'));
-                modal.show();
-            }, 800);
+            // Coba kirim ke backend (bikin transaksi Midtrans asli)
+            submitToBackend(order).then(function (backendResult) {
+                if (backendResult && backendResult.snapRedirect) {
+                    // Backend aktif: buka halaman pembayaran Midtrans Snap
+                    saveOrder(order);
+                    btn.disabled = false;
+                    btn.innerHTML = '<i class="bi bi-lock-fill me-2"></i>Bayar Sekarang &amp; Pesan';
+                    window.open(backendResult.snapRedirect, '_blank');
+                    showInfoModal(order.orderNo);
+                    return;
+                }
+                // Backend tidak aktif / gagal bikin transaksi -> mode demo lokal
+                setTimeout(function () {
+                    saveOrder(order);
+                    btn.disabled = false;
+                    btn.innerHTML = '<i class="bi bi-lock-fill me-2"></i>Bayar Sekarang &amp; Pesan';
+                    renderPayment(order);
+                    const modal = new bootstrap.Modal($('paymentModal'));
+                    modal.show();
+                }, 400);
+            }).catch(function () {
+                setTimeout(function () {
+                    saveOrder(order);
+                    btn.disabled = false;
+                    btn.innerHTML = '<i class="bi bi-lock-fill me-2"></i>Bayar Sekarang &amp; Pesan';
+                    renderPayment(order);
+                    const modal = new bootstrap.Modal($('paymentModal'));
+                    modal.show();
+                }, 400);
+            });
         });
     });
+
+    // ============ KIRIM ORDER KE BACKEND (Midtrans) ============
+    function submitToBackend(order) {
+        const payload = {
+            service: order.service,
+            package: order.package,
+            name: order.name,
+            email: order.email,
+            phone: order.phone.replace(/[^0-9]/g, ''),
+            description: order.description,
+            paymentMethod: order.paymentMethod
+        };
+
+        return fetch(CONFIG.BACKEND_URL + '/api/orders', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload),
+            signal: AbortSignal.timeout(10000)
+        })
+            .then(function (res) {
+                if (!res.ok) throw new Error('Backend status: ' + res.status);
+                return res.json();
+            })
+            .then(function (data) {
+                if (data && data.order) return data.order;
+                throw new Error('Respons backend tidak valid');
+            });
+    }
+
+    function showInfoModal(orderNo) {
+        // Modal info sederhana pakai Bootstrap Toast
+        const modalEl = $('paymentModal');
+        const content = $('paymentContent');
+        content.innerHTML =
+            '<div class="payment-box">' +
+            '<div class="success-icon mb-3"><i class="bi bi-arrow-up-right-circle-fill"></i></div>' +
+            '<h5 class="fw-bold">Order ' + orderNo + ' dibuat!</h5>' +
+            '<p class="text-muted">Halaman pembayaran Midtrans sudah dibuka di tab baru. Selesaikan pembayaran di sana untuk konfirmasi otomatis.</p>' +
+            '<a class="btn btn-accent w-100 fw-bold" href="index.html">Kembali ke Beranda</a>' +
+            '</div>';
+        const modal = new bootstrap.Modal(modalEl);
+        modal.show();
+    }
 
 })();
