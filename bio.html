@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JasaDigital - Mulai Bisnis Online Anda</title>
+    <meta name="description" content="Jasa website, desain, SEO, marketing & AI untuk UMKM Indonesia. Promo harga perkenalan website mulai Rp250rb. Pembayaran QRIS & VA.">
+    <meta name="robots" content="index, follow">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%234F46E5'/><text x='50' y='68' font-size='50' text-anchor='middle' fill='white' font-family='Arial' font-weight='bold'>J</text></svg>">
+
+    <!-- Google Analytics (GA4) -- ganti G-XXXXXXXXXX dengan ID pengukuran Anda -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+        gtag('js', new Date());
+        gtag('config', 'G-XXXXXXXXXX');
+    </script>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        body { background: linear-gradient(180deg, #EEF2FF 0%, #FFFFFF 100%); min-height: 100vh; }
+        .bio-wrap { max-width: 460px; margin: 0 auto; padding: 40px 20px 60px; text-align: center; }
+        .bio-logo { width: 84px; height: 84px; background: linear-gradient(135deg, #4F46E5, #7C3AED); color:#fff; border-radius: 24px; display: inline-flex; align-items: center; justify-content: center; font-size: 2rem; font-weight: 800; box-shadow: 0 10px 30px rgba(79,70,229,.35); }
+        .bio-name { font-weight: 800; font-size: 1.4rem; margin: 14px 0 4px; color:#0F172A; }
+        .bio-tag { color: #64748B; font-size: .95rem; margin-bottom: 8px; }
+        .bio-badge { display:inline-block; background:#ECFDF5; color:#059669; border:1px solid #A7F3D0; font-size:.85rem; font-weight:700; border-radius:99px; padding:6px 14px; margin-bottom: 4px; }
+        .bio-stats { display: flex; justify-content: center; gap: 28px; color:#334155; margin: 12px 0 22px; }
+        .bio-stats strong { display:block; font-size: 1.15rem; color:#0F172A; }
+        .bio-stats small { font-size: .78rem; color:#94A3B8; }
+        .btn-bio { display:flex; align-items:center; gap:12px; width:100%; padding:15px 18px; border-radius:16px; font-weight:700; font-size:1rem; margin-bottom:12px; text-decoration:none; border:none; transition: transform .15s ease, box-shadow .15s ease; box-shadow:0 2px 10px rgba(15,23,42,.06); }
+        .btn-bio:hover { transform: translateY(-2px); box-shadow:0 8px 24px rgba(15,23,42,.12); }
+        .btn-bio i { font-size:1.25rem; width:26px; }
+        .wa { background:#25D366; color:#fff; }
+        .promo { background:linear-gradient(135deg,#4F46E5,#7C3AED); color:#fff; }
+        .order { background:#fff; color:#0F172A; border:1px solid #E2E8F0; }
+        .check { background:#fff; color:#0F172A; border:1px solid #E2E8F0; }
+        .link { background:#fff; color:#0F172A; border:1px solid #E2E8F0; justify-content:center; }
+        .bio-safe { margin-top:20px; font-size:.8rem; color:#94A3B8; }
+        .bio-safe .bi { color:#10B981; }
+    </style>
+</head>
+<body>
+    <div class="bio-wrap">
+        <div class="bio-logo">J</div>
+        <h1 class="bio-name">JasaDigital</h1>
+        <p class="bio-tag">Website, Desain, SEO, Marketing &amp; AI untuk UMKM</p>
+        <span class="bio-badge">&#127881; PROMO 20% Order Pertama</span>
+
+        <div class="bio-stats">
+            <div><strong>10+</strong><small>Layanan</small></div>
+            <div><strong>RQ</strong><small>QRIS &amp; VA</small></div>
+            <div><strong>7H</strong><small>Support</small></div>
+        </div>
+
+        <!-- Tombol utama -->
+        <a class="btn-bio promo" href="https://wa.me/6281383048811?text=Halo%20JasaDigital!%20Saya%20mau%20pakai%20promo%20harga%20perkenalan%20(website%20mulai%20Rp250rb).%20Info%20caranya%20dong.%20%F0%9F%9A%80" target="_blank" rel="noopener">
+            <i class="bi bi-fire"></i> Promo Harga Perkenalan - Rp250rb
+        </a>
+        <a class="btn-bio order" href="order.html">
+            <i class="bi bi-cart"></i> Pesan Layanan
+        </a>
+        <button class="btn-bio check" onclick="document.getElementById('cekBox').classList.toggle('d-none')">
+            <i class="bi bi-search-heart"></i> Cek Status Order
+        </button>
+        <div id="cekBox" class="d-none text-start" style="background:#fff;border:1px solid #E2E8F0;border-radius:16px;padding:16px;margin-bottom:12px;">
+            <form id="cekOrderForm">
+                <label class="form-label fw-semibold small" for="cekOrderInput">Nomor Order</label>
+                <input type="text" class="form-control" id="cekOrderInput" placeholder="Contoh: JD-250918-XXXXX" autocomplete="off">
+                <button type="submit" class="btn btn-accent w-100 mt-2 fw-semibold" style="border-radius:12px;">Cek Status</button>
+            </form>
+            <div id="cekOrderResult" class="mt-3"></div>
+        </div>
+        <a class="btn-bio link" href="index.html#layanan">
+            <i class="bi bi-grid"></i> Layanan &amp; Harga
+        </a>
+        <a class="btn-bio link" href="index.html#portofolio">
+            <i class="bi bi-images"></i> Portofolio
+        </a>
+        <a class="btn-bio wa" href="https://wa.me/6281383048811" target="_blank" rel="noopener">
+            <i class="bi bi-whatsapp"></i> Chat WhatsApp
+        </a>
+
+        <div class="bio-safe">
+            <i class="bi bi-shield-check"></i> Pembayaran aman QRIS / Virtual Account &middot; Data terenkripsi SSL
+        </div>
+    </div>
+
+    <script src="js/security.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>
